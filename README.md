@@ -1,3 +1,43 @@
+# Quick Start
+Basic dependencies
+```bash
+pip install numpy
+pip install func-timeout
+pip install tqdm
+pip install textwrap
+pip install psutil
+pip install tiktoken
+pip install tree-sitter==0.21.3
+```
+Download data
+```bash
+cd evaluation/EvoCodeBench
+pip install wget
+python -m wget https://huggingface.co/datasets/LJ0815/EvoCodeBench/resolve/main/EvoCodeBench-2403/Dependency_Data.tar.gz
+python -m wget https://huggingface.co/datasets/LJ0815/EvoCodeBench/resolve/main/EvoCodeBench-2403/Source_Code.tar.gz
+python -m wget https://huggingface.co/datasets/LJ0815/EvoCodeBench/resolve/main/EvoCodeBench-2403/data.tar.gz
+tar -zxvf Dependency_Data.tar.gz
+tar -zxvf Source_Code.tar.gz
+tar -zxvf data.tar.gz
+```
+To generate code, use need additional packages:
+```
+pip install flash-attn --no-build-isolation
+pip install vllm 
+
+```
+To use [snowflake-artic-instruct](https://huggingface.co/Snowflake/snowflake-arctic-instruct), please install vllm [here](https://docs.google.com/document/d/1SDv-HpXtgWPGCPOksmqhRiO1fkYAYkRpjy84Lj89DdU/edit).
+
+To execute code for Pass@k evaluation: 
+```
+cd evaluation/EvoCodeBench
+./setup_env.sh
+```
+Note that you might need a separate env as this evaluation requires to install all dependent packages. 
+
+
+------
+
 # EvoCodeBench
 
 EvoCodeBench is an evolutionary code generation benchmark aligned with real-world code repositories. Details of EvoCodeBench can be found in our paper "EvoCodeBench: An Evolving Code Generation Benchmark Aligned with Real-world Code Repositories" [Paper](https://lj2lijia.github.io/papers/EvoCodeBench_Preprint.pdf).
