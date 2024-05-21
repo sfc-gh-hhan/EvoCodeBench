@@ -1,4 +1,4 @@
-Root=/home/user/EvoCodeBench
+Root=${PWD}
 Data_Path=$Root/data.jsonl
 Source_Code_Root=$Root/Source_Code
 
@@ -219,6 +219,4 @@ deactivate
 
 
 cd $Root
-python update_test_path.py \ 
-    --data_path $Data_Path \
-    --source_code_root $Source_Code_Root
+python update_test_path.py --data_path $Data_Path --source_code_root $Source_Code_Root

@@ -40,7 +40,7 @@ def load_model(model_name: str):
     elif model_name == "qwen1.5-7b":
         print("Loading qwen1.5-7b")
         model_dir = "Qwen/Qwen1.5-7B"
-    model = LLM(model=model_dir, trust_remote_code=True, gpu_memory_utilization=0.9, tensor_parallel_size=4)
+    model = LLM(model=model_dir, trust_remote_code=True, gpu_memory_utilization=0.9, tensor_parallel_size=1)
     tokenizer = AutoTokenizer.from_pretrained(model_dir)
     return model, tokenizer
 

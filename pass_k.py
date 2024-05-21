@@ -9,6 +9,7 @@ from func_timeout import func_set_timeout
 import func_timeout
 from argparse import ArgumentParser
 import textwrap
+import traceback
 
 
 def parse_args():
@@ -34,14 +35,19 @@ def adjust_indent(code, new_indent):
 def execution_tests(test, project_path):
     command = "source myenv/bin/activate && pytest " + test
     process = subprocess.Popen(['bash', '-c', command], cwd=project_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process_id = process.pid
     try:
         while True:
-            process_id = process.pid
-            process_memory = psutil.Process(process_id).memory_info().rss
-            if process_memory > 5 * 1024 * 1024 * 1024: # 5GB memory usage per test
-                process.terminate()
-                process.wait()
-                return False # Out of Memory
+            try:
+                # (MAC OS) psutil.NoSuchProcess: process no longer exists (pid=41755)
+                process_memory = psutil.Process(process_id).memory_info().rss
+                if process_memory > 5 * 1024 * 1024 * 1024: # 5GB memory usage per test
+                    process.terminate()
+                    process.wait()
+                    return False # Out of Memory
+            except psutil.NoSuchProcess:
+                # print(traceback.format_exc())
+                pass
             return_code = process.poll()
             if return_code is not None:
                 if return_code != 0:
