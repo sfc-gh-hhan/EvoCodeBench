@@ -13,9 +13,10 @@ def parse_args():
     parser.add_argument("--output_dir", type=str)
     parser.add_argument("--moda", type=str, default='greedy')
     parser.add_argument("--max_tokens", type=int, default=500)
+    parser.add_argument("--tensor_parallel_size", type=int, default=8)
     return parser.parse_args()
 
-def load_model(model_name: str):
+def load_model(model_name: str, tensor_parallel_size: int):
     if model_name.startswith("deepseek-7b"):
         print("Loading deepseek-coder-7b")
         model_dir = "deepseek-ai/deepseek-coder-6.7b-base"
@@ -40,7 +41,13 @@ def load_model(model_name: str):
     elif model_name == "qwen1.5-7b":
         print("Loading qwen1.5-7b")
         model_dir = "Qwen/Qwen1.5-7B"
-    model = LLM(model=model_dir, trust_remote_code=True, gpu_memory_utilization=0.9, tensor_parallel_size=1)
+
+    if model_name == "yak2c":
+        model_dir = "/notebooks/yak2c"
+        model = LLM(model=model_dir, quantization="deepspeedfp", tensor_parallel_size=2)
+    else:
+        model = LLM(model=model_dir, trust_remote_code=True, gpu_memory_utilization=0.9,
+                    tensor_parallel_size=tensor_parallel_size)
     tokenizer = AutoTokenizer.from_pretrained(model_dir)
     return model, tokenizer
 
@@ -72,6 +79,12 @@ def retrieve_special_ids(model_name: str, tokenizer):
         prefix_id = tokenizer.convert_tokens_to_ids("<fim_prefix>")
         middle_id = tokenizer.convert_tokens_to_ids("<fim_middle>")
         suffix_id = tokenizer.convert_tokens_to_ids("<fim_suffix>")
+    # Note that yak2c is not FiM pretrained
+    elif model_name.startswith("yak2c"):
+        # tokenizer.all_special_tokens: ['<s>', '</s>', '<unk>']
+        prefix_id = tokenizer.convert_tokens_to_ids("<s>")
+        middle_id = tokenizer.convert_tokens_to_ids("<unk>")
+        suffix_id = tokenizer.convert_tokens_to_ids("</s>")
     else:
         prefix_id, middle_id, suffix_id = None, None, None
 
@@ -163,7 +176,7 @@ def inference(args, task, model, tokenizer, prompt_file, output_dir, sampling_pa
 
 def main():
     args = parse_args()
-    model, tokenizer = load_model(args.model)
+    model, tokenizer = load_model(args.model, args.tensor_parallel_size)
     print("Loaded model and tokenizer.")
 
     if args.moda == 'greedy':

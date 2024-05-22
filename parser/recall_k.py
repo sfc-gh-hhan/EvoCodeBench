@@ -43,11 +43,11 @@ def compute_recall(generated_dependency, reference_dependency):
     
 
 def report_results(args, k_list, output_data, benchmark_data):
-    if not os.path.exists(args.output_file):
+    if not os.path.exists(args.log_file):
         raise ValueError("Output file not found")
     
     parse_results = dict()
-    with open(args.output_file, 'r') as f:
+    with open(args.log_file, 'r') as f:
         for line in f:
             js = json.loads(line)
             namespace, completion = js['namespace'], js['completion']
