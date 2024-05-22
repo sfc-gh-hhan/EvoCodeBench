@@ -53,7 +53,8 @@ def load_model(model_name: str, tensor_parallel_size: int):
 
 
 def retrieve_context_length(model_name: str):
-    if model_name.startswith("deepseek") or model_name.startswith("codellama") or model_name.startswith("starcoder2"):
+    if model_name.startswith("deepseek") or model_name.startswith("codellama") or \
+       model_name.startswith("starcoder2") or model_name.startswith("yak2c"):
         return 16384
     elif model_name.startswith("gemma-7b"):
         return 8192

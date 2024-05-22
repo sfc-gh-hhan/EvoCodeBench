@@ -15,17 +15,10 @@ pip install nvitop
 # pip install flash-attn --no-build-isolation
 
 # To use [snowflake-artic-instruct](https://huggingface.co/Snowflake/snowflake-arctic-instruct), please install vllm [here](https://docs.google.com/document/d/1SDv-HpXtgWPGCPOksmqhRiO1fkYAYkRpjy84Lj89DdU/edit).
-# cd /notebooks
-# git clone -b arctic https://github.com/Snowflake-Labs/vllm.git
-#cd /notebooks/vllm
-#pip install -e .
-#pip install git+https://github.com/Snowflake-Labs/vllm.git@arctic
-# git clone -b arctic https://github.com/Snowflake-Labs/transformers.git
-#cd transformers
-#pip install -e .
-#cd ..
-# pip install deepspeed
 pip install git+https://github.com/Snowflake-Labs/transformers.git@arctic
+# This removes undefined DeepSpeed.linear error for yak
+# pip install deepspeed
+pip install git+https://github.com/Snowflake-Labs/DeepSpeed.git@jrasley/align-lora-weights
 
 # To save s3 checkpoints to local, you need aws
 # cd /notebooks
@@ -40,8 +33,11 @@ pip install git+https://github.com/Snowflake-Labs/transformers.git@arctic
 # mkdir yak2c
 # /notebooks/local/bin/aws s3 sync s3://ml-dev-sfc-or-dev-misc1-k8s/yak/yak-instruct/yak2c-small-instruct-v44/2024.05.12-03.05.36/converted_global_step3194/ yak2c
 
-cd ${ROOT}/vllm/examples
+# cd submodules
+# git clone -b arctic https://github.com/Snowflake-Labs/vllm.git
+#pip install git+https://github.com/Snowflake-Labs/vllm.git@arctic
+cd ${ROOT}/submodules/vllm/examples
 # Make sure the yak_model_path points to the folder path we provided.
 python offline_inference_arctic.py 2>&1 | tee -a offline_inference_arctic.log
 
-cd ..
+cd ../..
